@@ -1,0 +1,62 @@
+<p-table [value]="transactions" selectionMode="single" styleClass="p-datatable-striped" styleClass="p-datatable-sm p-datatable-striped"
+		[scrollable]="true" scrollHeight="500px" [tableStyle]="{'min-width': '30rem'}" sortMode="multiple" dataKey="id">
+	<ng-template pTemplate="header">
+		<tr>
+			<th></th>
+			<th pSortableColumn="id"># <p-sortIcon field="id"></p-sortIcon></th>
+			<th pSortableColumn="type" colspan="2">Type <p-sortIcon field="type"></p-sortIcon></th>
+			<th pSortableColumn="description">Description <p-sortIcon field="description"></p-sortIcon></th>
+			<th pSortableColumn="amount" colspan="2">Amount <p-sortIcon field="amount"></p-sortIcon></th>
+			<th pSortableColumn="savedAt">Saved at <p-sortIcon field="savedAt"></p-sortIcon></th>
+			<th></th>
+		</tr>
+	</ng-template>
+	<ng-template pTemplate="body" let-transaction let-expanded="expanded">
+		<tr [pSelectableRow]="transaction">
+			<td>
+				<button type="button" pButton pRipple [pRowToggler]="transaction" class="p-button-text p-button-rounded p-button-plain"
+						[icon]="expanded ? 'fa-solid fa-angle-down' : 'fa-solid fa-chevron-right'"></button>
+			</td>
+			<td>{{ transaction.id }}</td>
+			<td colspan="2"><i class="mr-2" [class]="transaction.type | transactionTypeIcon"></i>{{ transaction.type }}</td>
+			<td>{{ transaction.description }}</td>
+			<td>$</td>
+			<td class="text-right">{{ transaction.amount | number:'1.2' }}</td>
+			<td>{{ transaction.savedAt | date:'yyyy-MM-dd hh:mm:ss a' }}</td>
+			<td class="text-right">
+				<p-button icon="fa-solid fa-list" [raised]="true" size="small"
+						severity="help" label="View" class="mr-1"
+						*ngIf="showView" (click)="onViewClick(transaction)"/>
+
+				<p-button icon="fa-solid fa-check" [raised]="true" size="small"
+						severity="success" label="Apply" class="mr-1"
+						*ngIf="showApply && !transaction.applied" (click)="onApplyClick(transaction)"/>
+
+				<p-button icon="fa-solid fa-pencil" [raised]="true" size="small"
+						severity="warning" label="Edit" class="mr-1"
+						*ngIf="showEdit" (click)="onEditClick(transaction)"/>
+
+				<p-button icon="fa-solid fa-trash-can" [raised]="true" size="small"
+						severity="danger" label="Delete"
+						*ngIf="showDelete" (click)="onDeleteClick(transaction)"/>
+			</td>
+		</tr>
+	</ng-template>
+	<ng-template pTemplate="rowexpansion" let-transaction>
+		<tr>
+			<td colspan="2"></td>
+			<td><i class="mr-2" [class]="transaction.origin.icon"></i>{{ transaction.origin.name }}</td>
+			<td><i class="mr-2" [class]="transaction.destination?.icon"></i>{{ transaction.destination?.name }}</td>
+			<td></td>
+			<td>$</td>
+			<td class="text-right">{{ transaction.interest | number:'1.2' }}</td>
+			<td>{{ transaction.appliedAt | date:'yyyy-MM-dd hh:mm:ss a' }}</td>
+			<td class="text-right"><p-tag [value]="transaction.applied ? 'Applied' :  'Pending'" [severity]="getAppliedSeverity(transaction.applied)"></p-tag></td>
+		</tr>
+	</ng-template>
+	<ng-template pTemplate="emptymessage">
+		<tr>
+			<td colspan="9" class="text-center">No transactions found.</td>
+		</tr>
+	</ng-template>
+</p-table>

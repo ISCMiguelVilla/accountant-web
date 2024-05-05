@@ -1,0 +1,7 @@
+<p-card [header]="title">
+	<p-toast></p-toast>
+	<app-schedule-transaction-form #transactionForm
+			(onSaveEmitter)="onSave($event)"
+			(onCancelEmitter)="onCancel()"
+			(onCheckEmitter)="onCheck($event)"/>
+</p-card>

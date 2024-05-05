@@ -1,0 +1,16 @@
+<canvas id="balance" >{{ incomeStatementChar }}</canvas>
+<div class="flex justify-content-between align-items-center mt-2 mx-4">
+	<div class="flex ml-5">
+		<p-button size="small" class="mr-1" icon="fa-solid fa-calendar" [severity]="getDimensionSeverity(enumDimension.YEAR)" (click)="setDimension(enumDimension.YEAR)"></p-button>
+		<p-button size="small" class="mr-1" icon="fa-regular fa-calendar" [severity]="getDimensionSeverity(enumDimension.MONTH)" (click)="setDimension(enumDimension.MONTH)"></p-button>
+		<p-button size="small" class="mr-1" icon="fa-solid fa-calendar-week" [severity]="getDimensionSeverity(enumDimension.WEEK)" (click)="setDimension(enumDimension.WEEK)"></p-button>
+		<p-button size="small" class="mr-1" icon="fa-regular fa-calendar-days" [severity]="getDimensionSeverity(enumDimension.DAY)" (click)="setDimension(enumDimension.DAY)"></p-button>
+
+	</div>
+	<div class="flex">
+		<p-button size="small" class="mr-1" icon="fa-solid fa-angle-left" severity="secondary" (click)="onLeftClick()"></p-button>
+		<p-button size="small" class="mr-1" icon="fa-solid fa-magnifying-glass-minus" severity="secondary" (click)="onZoomOutClick()"></p-button>
+		<p-button size="small" class="mr-1" icon="fa-solid fa-magnifying-glass-plus" severity="secondary" (click)="onZoomInClick()"></p-button>
+		<p-button size="small" icon="fa-solid fa-angle-right" severity="secondary" (click)="onRightClick()"></p-button>
+	</div>
+</div>

@@ -1,0 +1,5 @@
+<p-toast></p-toast>
+
+<p-card [header]="title">
+	<app-account-form #accountForm (onSaveEmitter)="onSave($event)" (onCancelEmitter)="onCancel()"/>
+</p-card>

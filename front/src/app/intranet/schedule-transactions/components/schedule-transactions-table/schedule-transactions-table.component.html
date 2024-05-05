@@ -1,0 +1,60 @@
+<p-table [value]="scheduleTransactions" selectionMode="single" styleClass="p-datatable-striped" styleClass="p-datatable-sm p-datatable-striped"
+[scrollable]="true" scrollHeight="500px" [tableStyle]="{'min-width': '30rem'}" sortMode="multiple" dataKey="id">
+	<ng-template pTemplate="header">
+		<tr>
+			<th></th>
+			<th pSortableColumn="id"># <p-sortIcon field="id"></p-sortIcon></th>
+			<th pSortableColumn="type" colspan="2">Type <p-sortIcon field="type"></p-sortIcon></th>
+			<th pSortableColumn="description">Description <p-sortIcon field="description"></p-sortIcon></th>
+			<th pSortableColumn="amount" colspan="2">Amount <p-sortIcon field="amount"></p-sortIcon></th>
+			<th pSortableColumn="nextExecution">Next execution <p-sortIcon field="nextExecution"></p-sortIcon></th>
+			<th></th>
+		</tr>
+	</ng-template>
+	<ng-template pTemplate="body" let-scheduleTransaction let-expanded="expanded">
+		<tr [pSelectableRow]="scheduleTransaction">
+			<td>
+				<button type="button" pButton pRipple [pRowToggler]="scheduleTransaction" class="p-button-text p-button-rounded p-button-plain"
+						[icon]="expanded ? 'fa-solid fa-angle-down' : 'fa-solid fa-chevron-right'"></button>
+			</td>
+			<td>{{ scheduleTransaction.id }}</td>
+			<td colspan="2"><i class="mr-2" [class]="scheduleTransaction.type | transactionTypeIcon"></i>{{ scheduleTransaction.type }}</td>
+			<td>{{ scheduleTransaction.description }}</td>
+			<td>$</td>
+			<td class="text-right">{{ scheduleTransaction.amount | number:'1.2' }}</td>
+			<td>{{ scheduleTransaction.nextExecution | date:'yyyy-MM-dd hh:mm:ss a'  }}</td>
+			<td class="text-right">
+				<p-button icon="fa-solid fa-pencil" [raised]="true" size="small"
+						severity="warning" label="Edit" class="mr-1"
+						(click)="onEditClick(scheduleTransaction)"/>
+
+				<p-button [icon]="updateStatusSeverity(scheduleTransaction.status).icon" [raised]="true" size="small"
+						[severity]="updateStatusSeverity(scheduleTransaction.status).severity" [label]="updateStatusSeverity(scheduleTransaction.status).text" class="mr-1"
+						(click)="onUpdateStatusClick(scheduleTransaction)"/>
+
+				<p-button icon="fa-solid fa-arrow-right" [raised]="true" size="small"
+						severity="info" label="Next" class="mr-1"
+						(click)="onNextExecutionClick(scheduleTransaction)"/>
+			</td>
+		</tr>
+	</ng-template>
+	<ng-template pTemplate="rowexpansion" let-scheduleTransaction>
+		<tr>
+			<td colspan="2"></td>
+			<td><i class="mr-2" [class]="scheduleTransaction.origin.icon"></i>{{ scheduleTransaction.origin.name }}</td>
+			<td><i class="mr-2" [class]="scheduleTransaction.destination?.icon"></i>{{ scheduleTransaction.destination?.name }}</td>
+			<td>{{ scheduleTransaction.cronExpression }}</td>
+			<td>$</td>
+			<td class="text-right">{{ scheduleTransaction.interest | number:'1.2' }}</td>
+			<td>{{ scheduleTransaction.lastExecution ? (scheduleTransaction.lastExecution | date:'yyyy-MM-dd hh:mm:ss a') : '-' }}</td>
+			<td class="text-right">
+				<p-tag [value]="scheduleTransaction.status | uppercase" [severity]="getStatusSeverity(scheduleTransaction.status)"></p-tag>
+			</td>
+		</tr>
+	</ng-template>
+	<ng-template pTemplate="emptymessage">
+		<tr>
+			<td colspan="9" class="text-center">No schedule transactions found.</td>
+		</tr>
+	</ng-template>
+</p-table>

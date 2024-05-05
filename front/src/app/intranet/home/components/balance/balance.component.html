@@ -1,0 +1,9 @@
+@if( group ) {
+	<div class="flex justify-content-between">
+		<span class="flex text-900 font-medium text-xl">Total</span>
+		<span class="flex text-green-500 font-medium text-lg">$ {{ group.total | number:'1.2' }}</span>
+	</div>
+	@for( account of group.subAccounts; track account.id) {
+		<app-balance-item [account]="account"></app-balance-item>
+	}
+}

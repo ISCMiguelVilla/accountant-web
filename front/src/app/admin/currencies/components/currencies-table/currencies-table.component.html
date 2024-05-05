@@ -1,0 +1,24 @@
+<p-table [value]="currencies" selectionMode="single" styleClass="p-datatable-striped" styleClass="p-datatable-sm p-datatable-striped">
+	<ng-template pTemplate="header">
+		<tr>
+			<th>#</th>
+			<th>Name</th>
+			<th>ISO</th>
+			<th>Color</th>
+			<th>Status</th>
+			<th></th>
+		</tr>
+	</ng-template>
+	<ng-template pTemplate="body" let-currency>
+		<tr [pSelectableRow]="currency">
+			<td>{{ currency.id }}</td>
+			<td>{{ currency.name }}</td>
+			<td>{{ currency.iso | uppercase }}</td>
+			<td class="text-shadow" [ngStyle]="{'background': currency.color}">{{ currency.color | uppercase }}</td>
+			<td><p-tag [value]="currency.status" [severity]="getStatusSeverity(currency.status)"></p-tag></td>
+			<td class="text-right">
+				<p-tag [value]="'Edit'" icon="fa-solid fa-pencil" [severity]="'warning'" [routerLink]="[ currency.id, 'edit' ]"></p-tag>
+			</td>
+		</tr>
+	</ng-template>
+</p-table>

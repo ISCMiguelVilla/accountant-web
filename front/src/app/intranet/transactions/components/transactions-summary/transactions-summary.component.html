@@ -1,0 +1,14 @@
+<p-dialog header="Summary" [(visible)]="visible" [modal]="true"
+		[style]="{ width: '50vw' }"  [draggable]="false" [resizable]="false">
+	<div class="grid">
+		@for (account of accounts; track account.id) {
+			<div class="col-12 md:col-6">
+				<app-account-card [account]="account"></app-account-card>
+			</div>
+		}
+	</div>
+	<ng-template pTemplate="footer">
+		<p-button icon="fa-solid fa-x" size="small" label="Cancel" severity="warning" class="mr-2" (click)="onCancelClick()"></p-button>
+		<p-button icon="fa-solid fa-floppy-disk" size="small" label="Save" severity="success" (click)="onSaveClick()"></p-button>
+	</ng-template>
+</p-dialog>

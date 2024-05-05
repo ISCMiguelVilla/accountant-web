@@ -1,0 +1,18 @@
+<div class="flex justify-content-between">
+	<div class="flex">
+		<span class="text-blue-500 font-medium text-sm mr-1">({{ account.percentage }}%)</span>
+		<span class="text-bluegray-500 font-medium text-md mr-1">{{ account.name }}</span>
+		@if( account.internalAccount ) {
+			<span class="text-green-600 font-medium text-sm">({{ account.internalAccount }})</span>
+		}
+	</div>
+	<div class="flex">
+		<div *ngIf="account.amount" class="text-green-700 font-medium text-md" [class.mr-1]="account.total">$ {{ account.amount | number:'1.2' }}</div>
+		<div *ngIf="account.total" class="text-green-700 font-medium text-md">$ {{ account.total | number:'1.2' }}</div>
+	</div>
+</div>
+@for( subAccount of account.subAccounts; track subAccount.id) {
+	<div style="margin-left: 25px;">
+		<app-balance-item [account]="subAccount"></app-balance-item>
+	</div>
+}

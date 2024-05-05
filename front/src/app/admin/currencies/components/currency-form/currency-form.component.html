@@ -1,0 +1,35 @@
+<form autocomplete="off" [formGroup]="currencyForm" role="form">
+	<div class="formgrid grid">
+		<div class="field col-12" [class.p-error]="currencyForm.get('name').touched && currencyForm.get('name').invalid">
+			<label htmlFor="name">Name</label>
+			<input formControlName="name" pInputText pAutoFocus [autofocus]="true" id="name" type="text" placeholder="Name" [ngClass]="{'ng-invalid ng-dirty': currencyForm.get('name').touched && currencyForm.get('name').invalid}"/>
+			<ng-container *ngIf="currencyForm.get('name').touched && currencyForm.get('name').invalid">
+				<small *ngIf="currencyForm.get('name').errors['required']">Name is required</small>
+				<small *ngIf="currencyForm.get('name').errors['minlength']">A minimum length of {{ currencyForm.get('name').errors['minlength'].requiredLength }} is required</small>
+			</ng-container>
+		</div>
+		<div class="field col-12" [class.p-error]="currencyForm.get('iso').touched && currencyForm.get('iso').invalid">
+			<label htmlFor="iso">ISO</label>
+			<input formControlName="iso" pInputText pAutoFocus [autofocus]="true" id="iso" type="text" placeholder="ISO" [ngClass]="{'ng-invalid ng-dirty': currencyForm.get('iso').touched && currencyForm.get('iso').invalid}"/>
+			<ng-container *ngIf="currencyForm.get('iso').touched && currencyForm.get('iso').invalid">
+				<small *ngIf="currencyForm.get('iso').errors['required']">ISO is required</small>
+				<small *ngIf="currencyForm.get('iso').errors['minlength']">A minimum length of {{ currencyForm.get('iso').errors['minlength'].requiredLength }} is required</small>
+			</ng-container>
+		</div>
+		<div class="field col-12 md:col-6">
+			<label htmlFor="color">Color</label><br>
+			<div class="flex justify-content-between flex-wrap">
+				<label class="flex align-items-center">{{ color | uppercase }}</label>
+				<p-colorPicker formControlName="color" class="flex align-items-center" formControlName="color"></p-colorPicker>
+			</div>
+		</div>
+		<div class="field col-12 md:col-6">
+			<label htmlFor="status">Status</label>
+			<p-dropdown formControlName="status" id="status" [options]="status | keyvalue" optionLabel="value" optionValue="key" placeholder="Select a status"></p-dropdown>
+		</div>
+		<div class="field col-12 flex flex-row-reverse">
+			<p-button icon="fa-solid fa-floppy-disk" label="Save" (click)="onSave()"></p-button>
+			<p-button icon="fa-solid fa-x" label="Cancel" severity="warning" class="mr-2" (click)="onCancel()"></p-button>
+		</div>
+	</div>
+</form>

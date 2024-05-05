@@ -1,0 +1,6 @@
+<div class="flex align-items-start">
+	<span class="text-green-500 font-medium text-sm mr-1">$</span>
+	<span class="text-green-500 font-medium text-lg">{{ integerPart | number:'1.0-0' }}</span>
+	<span class="text-green-500 font-medium text-sm mr-1">.{{ floatPart }}</span>
+	<span class="text-bluegray-500">{{ currency | uppercase }}</span>
+</div>

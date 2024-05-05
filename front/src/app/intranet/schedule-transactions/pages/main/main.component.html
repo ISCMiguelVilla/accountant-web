@@ -1,0 +1,11 @@
+<p-card header="Schedule transactions">
+	<div class="flex">
+		<p-button icon="fa-solid fa-plus" [raised]="true" size="small" [routerLink]="[ 'create' ]" label="Create"/>
+	</div>
+	<p-divider/>
+
+	<app-schedule-transactions-table [scheduleTransactions]="scheduleTransactions"
+			(onEditEmitter)="onEdit($event)"
+			(onUpdateStatusEmitter)="onUpdateStatus($event)"
+			(onNextExecutionEmitter)="onNextExecution($event)"/>
+</p-card>

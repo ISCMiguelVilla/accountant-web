@@ -1,0 +1,54 @@
+<p-table [value]="accounts" selectionMode="single" styleClass="p-datatable-striped" styleClass="p-datatable-sm p-datatable-striped"
+		[scrollable]="true" scrollHeight="500px" [tableStyle]="{'min-width': '30rem'}" sortMode="multiple" dataKey="id">
+	<ng-template pTemplate="header">
+		<tr>
+			<th pSortableColumn="id" pFrozenColumn># <p-sortIcon field="id"></p-sortIcon></th>
+			<th pSortableColumn="name" pFrozenColumn>Name <p-sortIcon field="name"></p-sortIcon></th>
+			<th pSortableColumn="parent.name">Parent <p-sortIcon field="parent.name"></p-sortIcon></th>
+			<th pSortableColumn="color">Color <p-sortIcon field="color"></p-sortIcon></th>
+			<th pSortableColumn="type">Type <p-sortIcon field="type"></p-sortIcon></th>
+			<th pSortableColumn="amount" colspan="2">Amount <p-sortIcon field="amount"></p-sortIcon></th>
+			<th pSortableColumn="includeInBalance">Include in balance <p-sortIcon field="includeInBalance"></p-sortIcon></th>
+			<th pSortableColumn="isTemporal">Is temporal <p-sortIcon field="isTemporal"></p-sortIcon></th>
+			<th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
+			<th></th>
+		</tr>
+	</ng-template>
+	<ng-template pTemplate="body" let-account>
+		<tr [pSelectableRow]="account">
+			<td pFrozenColumn>{{ account.id }}</td>
+			<td pFrozenColumn><i class="mr-2" [class]="account.icon"></i> {{ account.name }}</td>
+			<td>
+				@if( account.parent ) {
+					<a [routerLink]="[ account.parent.id, 'edit' ]">
+						<i class="mr-2" [class]="account.parent.icon"></i> {{ account.parent.name }}
+					</a>
+				} @else {
+					-
+				}
+			<td class="text-center text-shadow" [ngStyle]="{'background': account.color}">{{ account.color | uppercase }}</td>
+			<td class="text-center"><p-tag [value]="account.type" [severity]="account.type | accountColor"></p-tag></td>
+			@if ( showAmount(account.type) ) {
+				<td colspan="2">N/A</td>
+			} @else {
+				<td>$</td>
+				<td class="text-right">{{ (account.amount | number:'1.2') || '-' }}</td>
+			}
+			<td>
+				{{ account.includeInBalance ? 'Yes' : 'No' }}
+			</td>
+			<td>
+				{{ account.type == 'INVESTMENT' ? (account.isTemporal ? 'Yes' : 'No') : '-' }}
+			</td>
+			<td class="text-center"><p-tag [value]="account.status" [severity]="getStatusSeverity(account.status)"></p-tag></td>
+			<td class="text-right">
+				<p-button icon="fa-solid fa-pencil" [raised]="true" size="small" severity="warning" [routerLink]="[ account.id, 'edit' ]" label="Edit"></p-button>
+			</td>
+		</tr>
+	</ng-template>
+	<ng-template pTemplate="emptymessage">
+		<tr>
+			<td colspan="10" class="text-center">No accounts found.</td>
+		</tr>
+	</ng-template>
+</p-table>

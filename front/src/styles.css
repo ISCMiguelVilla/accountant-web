@@ -1,0 +1,31 @@
+/* You can add global styles to this file, and also import other style files */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    /* background-color: #FAFAFA; */
+}
+
+.text-shadow {
+    color: #fff;
+    text-shadow: 2px 1px 0 #444;
+}
+
+.p-card .p-card-content {
+    padding: 0;
+}
+
+/* Applied to p-inputNumber */
+/* .p-inputgroup input:first-child {
+    border-radius: 0 6px 6px 0;
+}
+
+.p-inputgroup button:first-child {
+    border-radius: 6px 0 0 6px;
+} */
+
+td, th {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis
+}

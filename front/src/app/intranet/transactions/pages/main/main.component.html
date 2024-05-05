@@ -1,0 +1,9 @@
+<p-card header="Transactions">
+	<div class="flex">
+		<p-button icon="fa-solid fa-plus" [raised]="true" size="small" [routerLink]="[ 'create' ]" label="Create"></p-button>
+	</div>
+	<p-divider></p-divider>
+	<app-transactions-table [transactions]="transactions"
+			[showView]="true"
+			[showApply]="true" (onApplyEmitter)="onApply($event)"/>
+</p-card>

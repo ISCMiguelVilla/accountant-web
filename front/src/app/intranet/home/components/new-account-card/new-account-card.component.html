@@ -1,0 +1,15 @@
+<p-card>
+	<div class="flex justify-content-between align-items-center mb-2" [style]="{ height: '3rem' }">
+		<div class="flex align-items-center">
+			<div class="flex align-items-center justify-content-center border-round mr-2 bg-gray-300" [style]="{ width: '2.5rem', height: '2.5rem'}">
+				<i class="text-sm text-shadow fa-solid fa-plus"></i>
+			</div>
+			<div>
+				<div class="text-900 font-medium text-xl mr-1">New account</div>
+				<span class="text-500 font-medium text-sm">Create new account</span>
+			</div>
+		</div>
+		<p-tag value="New" icon="fa-solid fa-plus" class="cursor-pointer" [routerLink]="[ 'accounts/create' ]"></p-tag>
+	</div>
+	<app-amount [amount]="0" [currency]="'empty'"></app-amount>
+</p-card>

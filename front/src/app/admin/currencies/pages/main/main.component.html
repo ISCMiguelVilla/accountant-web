@@ -1,0 +1,7 @@
+<p-card header="Currencies">
+	<div class="flex">
+		<p-button icon="fa-solid fa-plus" [raised]="true" size="small" [routerLink]="[ 'create' ]" label="Create"></p-button>
+	</div>
+	<p-divider></p-divider>
+	<app-currencies-table [currencies]="currencies"></app-currencies-table>
+</p-card>

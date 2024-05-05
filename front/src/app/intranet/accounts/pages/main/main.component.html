@@ -1,0 +1,7 @@
+<p-card header="Accounts">
+	<div class="flex">
+		<p-button icon="fa-solid fa-plus" [raised]="true" size="small" [routerLink]="[ 'create' ]" label="Create"></p-button>
+	</div>
+	<p-divider></p-divider>
+	<app-accounts-table [accounts]="accounts"></app-accounts-table>
+</p-card>

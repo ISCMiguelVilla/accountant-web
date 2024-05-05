@@ -1,0 +1,113 @@
+<form autocomplete="off" [formGroup]="accountForm" role="form" *ngIf="accounts && currencies">
+	<div class="formgrid grid p-fluid">
+		<div class="field col-12">
+			<label htmlFor="parent">Parent</label>
+			<p-dropdown placeholder="Select a parent"
+					formControlName="parent" id="parent" (onChange)="onParentSelectChange()"
+					[options]="parentAccounts"
+					[filter]="true" filterBy="name"
+					dataKey="id"
+					[showClear]="true">
+					<ng-template pTemplate="selectedItem">
+						<app-account-card *ngIf="parent" style="width: 100%;" [account]="parent"></app-account-card>
+					</ng-template>
+					<ng-template pTemplate="item" let-account>
+						<app-account-card style="width: 100%;" [account]="account"></app-account-card>
+					</ng-template>
+			</p-dropdown>
+		</div>
+		<div class="field col-12" [class.p-error]="accountForm.get('name').touched && accountForm.get('name').invalid">
+			<label htmlFor="name">Name</label>
+			<input formControlName="name" pInputText pAutoFocus [autofocus]="true" id="name" type="text" placeholder="Name"
+					[ngClass]="{'ng-invalid ng-dirty': accountForm.get('name').touched && accountForm.get('name').invalid}"/>
+			<ng-container *ngIf="accountForm.get('name').touched && accountForm.get('name').invalid">
+				<small *ngIf="accountForm.get('name').errors['required']">Name is required</small>
+				<small *ngIf="accountForm.get('name').errors['minlength']">A minimum length of {{ accountForm.get('name').errors['minlength'].requiredLength }} is required</small>
+			</ng-container>
+		</div>
+		<div class="field col-12" [class.p-error]="accountForm.get('type').touched && accountForm.get('type').invalid">
+			<label htmlFor="type">Type</label>
+			<p-dropdown formControlName="type" (onChange)="onTypeSelectChange()" id="type" [options]="types"
+					[ngClass]="{'ng-invalid ng-dirty': accountForm.get('type').touched && accountForm.get('type').invalid}"
+					[filter]="true" placeholder="Select a type">
+				<ng-template pTemplate="selectedItem">
+					<i class="mr-1" [class]="type | accountTypeIcon"></i> {{ type }}
+				</ng-template>
+				<ng-template pTemplate="item" let-type>
+					<i class="mr-1" [class]="type | accountTypeIcon"></i> {{ type }}
+				</ng-template>
+			</p-dropdown>
+			<ng-container *ngIf="accountForm.get('type').touched && accountForm.get('type').invalid">
+				<small *ngIf="accountForm.get('type').errors['required']">Type is required</small>
+			</ng-container>
+		</div>
+		<div class="field col-12 md:col-6" [class.p-error]="accountForm.get('amount').touched && accountForm.get('amount').invalid">
+			<label htmlFor="amount">Amount</label>
+			<p-inputGroup>
+				<p-inputGroupAddon>$</p-inputGroupAddon>
+				<p-inputNumber formControlName="amount" inputId="amount" placeholder="amount" [min]="0" [minFractionDigits]="2" [maxFractionDigits]="2"
+						[inputStyle]="{'text-align': 'right'}" [ngClass]="{'ng-invalid ng-dirty': accountForm.get('amount').touched && accountForm.get('amount').invalid}"/>
+			</p-inputGroup>
+			<ng-container *ngIf="accountForm.get('amount').touched && accountForm.get('amount').invalid">
+				<small *ngIf="accountForm.get('amount').errors['required']">Amount is required</small>
+				<small *ngIf="accountForm.get('amount').errors['min']">Minimum {{ accountForm.get('amount').errors['min'].min }}</small>
+			</ng-container>
+		</div>
+		<div class="field col-12 md:col-6" [class.p-error]="accountForm.get('currency').touched && accountForm.get('currency').invalid">
+			<label htmlFor="currency">Currency</label>
+			<p-dropdown formControlName="currency" [options]="currencies" optionLabel="iso" [filter]="true" filterBy="name" placeholder="Select a currency"
+					[ngClass]="{'ng-invalid ng-dirty': accountForm.get('currency').touched && accountForm.get('currency').invalid}">
+				<ng-template pTemplate="item" let-currency>
+					{{ currency.iso }} - {{ currency.name }}
+				</ng-template>
+			</p-dropdown>
+			<ng-container *ngIf="accountForm.get('currency').touched && accountForm.get('currency').invalid">
+				<small *ngIf="accountForm.get('currency').errors['required']">Currency is required</small>
+			</ng-container>
+		</div>
+		<div class="field col-12 md:col-6" [class.p-error]="accountForm.get('icon').touched && accountForm.get('icon').invalid">
+			<label htmlFor="icon">Icon</label>
+			<div class="flex align-items-center">
+				<i class="flex mr-2" [class]="icon || 'fa-solid fa-question'"></i>
+				<input formControlName="icon" pInputText id="icon" type="text" placeholder="Icon" [ngClass]="{'ng-invalid ng-dirty': accountForm.get('icon').touched && accountForm.get('icon').invalid}"/>
+			</div>
+			<ng-container *ngIf="accountForm.get('icon').touched && accountForm.get('icon').invalid">
+				<small *ngIf="accountForm.get('icon').errors['required']">Icon is required</small>
+				<small *ngIf="accountForm.get('icon').errors['minlength']">A minimum length of {{ accountForm.get('icon').errors['minlength']?.requiredLength }} is required</small>
+			</ng-container>
+		</div>
+		<div class="field col-12 md:col-6">
+			<label htmlFor="color">Color</label><br>
+			<div class="flex align-items-center">
+				<input formControlName="colorText" pInputText id="colorText" type="text" placeholder="Color" class="flex p-inputtext-sm mr-2"
+						(ngModelChange)="onColorTextChange()"
+						[ngClass]="{'ng-invalid ng-dirty': accountForm.get('colorText').touched && accountForm.get('colorText').invalid}"/>
+				<p-colorPicker class="flex" formControlName="color" (onChange)="onColorChange()"></p-colorPicker>
+			</div>
+		</div>
+		<div class="field col-12 md:col-6">
+			<label htmlFor="color">Additional</label><br>
+			<div class="field-checkbox">
+				<p-checkbox formControlName="includeInBalance" [binary]="true" inputId="includeInBalance"></p-checkbox>
+				<label for="includeInBalance">Include in balance</label>
+			</div>
+			<div class="field-checkbox">
+				<p-checkbox formControlName="isTemporal" [binary]="true" inputId="isTemporal"></p-checkbox>
+				<label for="isTemporal">Is temporal</label>
+			</div>
+		</div>
+		<div class="field col-12 md:col-6">
+			<label htmlFor="status">Status</label>
+			<div class="flex flex-column gap-3">
+				<div class="flex align-items-center" *ngFor="let status of statusList">
+					<p-radioButton formControlName="status" [value]="status" [inputId]="status"></p-radioButton>
+					<label [for]="status" class="ml-2">{{ status }}</label>
+				</div>
+			</div>
+		</div>
+		<div class="field col-12 flex justify-content-between align-items-center">
+			<p-button size="small" icon="fa-solid fa-x" label="Cancel" severity="warning" (click)="onCancel()"></p-button>
+			<p-button size="small" icon="fa-solid fa-floppy-disk" label="Save" (click)="onSave()"></p-button>
+		</div>
+	</div>
+</form>
