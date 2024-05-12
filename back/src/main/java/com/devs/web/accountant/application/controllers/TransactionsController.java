@@ -20,16 +20,6 @@ public class TransactionsController {
 		this.transactionsService = transactionsService;
 	}
 
-	@GetMapping("/{id}")
-	public ResponseEntity<TransactionDTO> findById(@PathVariable("id") Long id) {
-		return ResponseEntity.ok(this.transactionsService.findById(id));
-	}
-
-	@PostMapping
-	public TransactionDTO create(@RequestBody TransactionDTO transaction) {
-		return this.transactionsService.create(transaction);
-	}
-
 	@GetMapping("/list")
 	public ResponseEntity<List<TransactionDTO>> list() {
 		return ResponseEntity.ok(this.transactionsService.list());

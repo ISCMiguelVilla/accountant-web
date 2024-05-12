@@ -1,0 +1,55 @@
+<p-dialog [(visible)]="modalMessageVisible" [modal]="true"
+		w-full sm:w-20rem [draggable]="false" [resizable]="false"
+	[closeOnEscape]="false" [closable]="false">
+	<ng-template pTemplate="header">
+		<span class="font-bold white-space-nowrap">Success</span>
+	</ng-template>
+	<div class="flex align-items-center justify-content-center flex-wrap p-2">
+		<p-button icon="fa-solid fa-check" class="mr-2" [rounded]="true" severity="success" [outlined]="true" [raised]="true"></p-button>
+		<p>User created</p>
+	</div>
+	<ng-template pTemplate="footer">
+		<p-button icon="fa-solid fa-check" size="small" label="Ok" severity="success" (click)="onDoneClick()"></p-button>
+	</ng-template>
+</p-dialog>
+
+<div class="flex flex-column justify-content-center align-items-center h-full m-2">
+	<div class="card p-fluid w-full sm:w-20rem p-5">
+		<h2>Regístrate</h2>
+		<form autocomplete="off" [formGroup]="signUpForm" role="form">
+			<div class="field" [class.p-error]="signUpForm.get('name').touched && signUpForm.get('name').invalid">
+				<label htmlFor="name">Name</label>
+				<input formControlName="name" pInputText pAutoFocus id="name" type="text" placeholder="John Doe"
+						[ngClass]="{'ng-invalid ng-dirty': signUpForm.get('name').touched && signUpForm.get('name').invalid}"/>
+				<ng-container *ngIf="signUpForm.get('name').touched && signUpForm.get('name').invalid">
+					<small *ngIf="signUpForm.get('name').errors['required']">Name is required</small>
+					<small *ngIf="signUpForm.get('name').errors['minlength']">A minimum length of {{ signUpForm.get('name').errors['minlength'].requiredLength }} is required</small>
+				</ng-container>
+			</div>
+			<div class="field" [class.p-error]="signUpForm.get('username').touched && signUpForm.get('username').invalid">
+				<label htmlFor="username">Email</label>
+				<input formControlName="username" pInputText id="username" type="text" placeholder="your-email@example.com"
+						[ngClass]="{'ng-invalid ng-dirty': signUpForm.get('username').touched && signUpForm.get('username').invalid}"/>
+				<ng-container *ngIf="signUpForm.get('username').touched && signUpForm.get('username').invalid">
+					<small *ngIf="signUpForm.get('username').errors['required']">Email is required</small>
+					<small *ngIf="signUpForm.get('username').errors['email']">This doesn't look like an email</small>
+				</ng-container>
+			</div>
+			<div class="field" [class.p-error]="signUpForm.get('password').touched && signUpForm.get('password').invalid">
+				<label htmlFor="password">Password</label>
+				<p-password formControlName="password" inputId="password" [feedback]="false" placeholder="type your password" autocomplete="off"
+						[ngClass]="{'ng-invalid ng-dirty': signUpForm.get('password').touched && signUpForm.get('password').invalid}"/>
+				<ng-container *ngIf="signUpForm.get('password').touched && signUpForm.get('password').invalid">
+					<small *ngIf="signUpForm.get('password').errors['required']">Password is required</small>
+					<small *ngIf="signUpForm.get('password').errors['minlength']">A minimum length of {{ signUpForm.get('password').errors['minlength'].requiredLength }} is required</small>
+				</ng-container>
+			</div>
+			<div class="field">
+				<p-button icon="fa-solid fa-check" label="Sign up" (click)="onSave()"></p-button>
+			</div>
+		</form>
+		<div class="field">
+			<a routerLink="../sign-in">¿Ya tienes una cuenta?</a>
+		</div>
+	</div>
+</div>

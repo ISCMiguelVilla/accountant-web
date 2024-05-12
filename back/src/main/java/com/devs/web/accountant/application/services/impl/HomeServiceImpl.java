@@ -2,9 +2,11 @@ package com.devs.web.accountant.application.services.impl;
 
 import com.devs.web.accountant.application.services.HomeService;
 import com.devs.web.accountant.repository.TransactionRepository;
+import com.devs.web.accountant.repository.entities.User;
 import com.devs.web.accountant.representation.enums.EnumDimension;
 import com.devs.web.accountant.representation.views.BalanceItemView;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -45,6 +47,8 @@ public class HomeServiceImpl implements HomeService {
 
 	@Override
 	public List<BalanceItemView> balance(EnumDimension dimension, Integer size, String reference) {
+		var user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
 		var formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
 		var referenceDate = LocalDate.parse(reference + DATE_COMPLEMENT.get(dimension), formatter).atStartOfDay();
 
@@ -55,7 +59,7 @@ public class HomeServiceImpl implements HomeService {
 
 		String group = GROUP_SIZES.get(dimension);
 
-		return this.transactionRepository.balance(group, left, right);
+		return this.transactionRepository.balance(user.getId(), group, left, right);
 	}
 
 	public LocalDateTime left(LocalDateTime reference, EnumDimension dimension, Integer wideLeft) {

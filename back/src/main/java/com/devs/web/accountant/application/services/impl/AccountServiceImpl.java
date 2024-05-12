@@ -13,6 +13,7 @@ import com.devs.web.accountant.representation.mappers.AccountMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
@@ -63,20 +64,20 @@ public class AccountServiceImpl implements AccountService {
 	@Override
 	public List<AccountDTO> findAll() {
 		LOGGER.debug("findAll called");
-		var userId = 1L;
-		return this.accountMapper.mapToAccountsInUse(this.accountRepository.findByUserId(userId));
+		var user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		return this.accountMapper.mapToAccountsInUse(this.accountRepository.findByUserId(user.getId()));
 	}
 
 	@Override
 	public AccountDTO findById(Long id) {
 		LOGGER.debug("findById method called with id: {}", id);
-		var account = this.accountRepository.findByUserIdAndId(1L, id)
+		var user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		var account = this.accountRepository.findByUserIdAndId(user.getId(), id)
 				.orElseThrow(() -> {
 					LOGGER.error("Account with id {} doesn't exist", id);
 					return new ResourceNotFoundException("Account doesn't exist");
 				});
 		var accountDTO = this.accountMapper.mapToEditAccount(account);
-
 
 		var hasChildren = account.getSubAccounts().size() > 0;
 		accountDTO.setHasChildren(hasChildren);
@@ -92,7 +93,7 @@ public class AccountServiceImpl implements AccountService {
 	@Override
 	public AccountDTO create(AccountDTO accountDTO) {
 		LOGGER.debug("create method called with account: {}", accountDTO);
-		var user = User.builder().id(1L).build();
+		var user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
 		this.accountRepository.findByUserIdAndNameAndType(user.getId(), accountDTO.getName(), accountDTO.getType())
 				.ifPresent((account) -> {
@@ -105,7 +106,7 @@ public class AccountServiceImpl implements AccountService {
 			throw new MalformedRequestException("Couldn't create account with negative amount");
 		}
 
-		Account parent = this.getParent(user, accountDTO.getParent());
+		Account parent = this.getParent(user.getId(), accountDTO.getParent());
 		if( parent != null && EnumAccountType.GROUP != parent.getType() && !VALID_SUB_ACCOUNT_TYPES.get(parent.getType()).contains(accountDTO.getType()) ) {
 			LOGGER.error("Account couldn't of type {}", accountDTO.getType());
 			throw new MalformedRequestException("Sub account not supported");
@@ -114,7 +115,7 @@ public class AccountServiceImpl implements AccountService {
 		var account = this.accountMapper.map(accountDTO);
 		account.setId(null);
 		account.setUser(user);
-		account.setParent(this.getParent(user, accountDTO.getParent()));
+		account.setParent(this.getParent(user.getId(), accountDTO.getParent()));
 		account.setAmount(this.mapAmount(account.getType(), account.getAmount()));
 		account.setColor(account.getColor().toUpperCase());
 		account.setCreatedAt(LocalDate.now());
@@ -129,7 +130,7 @@ public class AccountServiceImpl implements AccountService {
 	@Override
 	public AccountDTO update(Long id, AccountDTO accountDTO) {
 		LOGGER.debug("update method called with id: {} and account: {}", id, accountDTO);
-		var user = User.builder().id(1L).build();
+		var user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
 		var account = this.accountRepository.findByUserIdAndId(user.getId(), id)
 				.orElseThrow(() -> {
@@ -150,7 +151,7 @@ public class AccountServiceImpl implements AccountService {
 			throw new MalformedRequestException("Couldn't create account with negative amount");
 		}
 
-		Account parent = this.getParent(user, accountDTO.getParent());
+		Account parent = this.getParent(user.getId(), accountDTO.getParent());
 		if( parent != null && EnumAccountType.GROUP != parent.getType() && !VALID_SUB_ACCOUNT_TYPES.get(parent.getType()).contains(accountDTO.getType()) ) {
 			LOGGER.error("Account couldn't of type {}", accountDTO.getType());
 			throw new MalformedRequestException("Sub account not supported");
@@ -181,7 +182,7 @@ public class AccountServiceImpl implements AccountService {
 				throw new MalformedRequestException("Parent would be recursive");
 			}
 		}
-		account.setParent(this.getParent(user, accountDTO.getParent()));
+		account.setParent(this.getParent(user.getId(), accountDTO.getParent()));
 
 		account.setAmount(this.mapAmount(account.getType(), account.getAmount()));
 		account.setColor(account.getColor().toUpperCase());
@@ -196,7 +197,7 @@ public class AccountServiceImpl implements AccountService {
 		return AccountServiceImpl.ACCOUNT_TYPES_WITHOUT_AMOUNT.contains(type) ? null : amount;
 	}
 
-	private Account getParent(User user, AccountDTO parentDTO) {
+	private Account getParent(Long userId, AccountDTO parentDTO) {
 		if( parentDTO == null ) {
 			return null;
 		}
@@ -205,7 +206,7 @@ public class AccountServiceImpl implements AccountService {
 			throw new MalformedRequestException("Malformed parent");
 		}
 
-		return this.accountRepository.findByUserIdAndId(user.getId(), parentDTO.getId())
+		return this.accountRepository.findByUserIdAndId(userId, parentDTO.getId())
 				.orElseThrow(() -> {
 					LOGGER.error("Account with id {} doesn't exit", parentDTO.getId());
 					return new ResourceNotFoundException("Parent doesn't exist");
@@ -215,16 +216,16 @@ public class AccountServiceImpl implements AccountService {
 	@Override
 	public List<AccountDTO> inUse() {
 		LOGGER.debug("inUse called");
-		var userId = 1L;
-		var accountsInUse = this.accountRepository.accountsInUse(userId);
+		var user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		var accountsInUse = this.accountRepository.accountsInUse(user.getId());
 		return  this.accountMapper.mapToAccountsInUse(accountsInUse);
 	}
 
 	@Override
 	public List<AccountDTO> usableAccounts() {
 		LOGGER.debug("usableAccounts called");
-		var userId = 1L;
-		var accountsInUse = this.accountRepository.usableAccounts(userId);
+		var user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		var accountsInUse = this.accountRepository.usableAccounts(user.getId());
 		return this.accountMapper.mapToAccountsInUse(accountsInUse);
 	}
 }

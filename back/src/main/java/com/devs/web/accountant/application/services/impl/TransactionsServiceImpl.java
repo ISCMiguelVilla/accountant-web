@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.support.CronExpression;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -160,24 +161,16 @@ public class TransactionsServiceImpl implements TransactionsService {
 	}
 
 	@Override
-	public TransactionDTO findById(Long id) {
-		return this.transactionMapper.map(this.transactionRepository.findById(id).get());
-	}
-
-	@Override
 	public List<TransactionDTO> list() {
-		return this.transactionMapper.map(this.transactionRepository.findByStatus(EnumStatus.ACTIVE));
-	}
-
-	@Override
-	public TransactionDTO create(TransactionDTO transaction) {
-		var transactions = this.createBulk(List.of(transaction));
-		return transactions.get(0);
+		var user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		return this.transactionMapper.map(this.transactionRepository.list(user.getId()));
 	}
 
 	@Override
 	public TransactionDTO apply(Long id) {
-		var transaction = this.transactionRepository.findById(id)
+		var user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+		var transaction = this.transactionRepository.findByUserIdAndId(user.getId(), id)
 				.orElseThrow(() -> new ResourceNotFoundException("Transaction with id " + id + " not found"));
 
 		if( transaction.getApplied() ) {
@@ -202,7 +195,9 @@ public class TransactionsServiceImpl implements TransactionsService {
 	}
 
 	private void applyTransferOfFunds(Transaction transaction) {
-		var destination = this.accountRepository.findById(transaction.getDestination().getId())
+		var user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+		var destination = this.accountRepository.findByUserIdAndId(user.getId(), transaction.getDestination().getId())
 				.orElseThrow(() -> {
 					LOGGER.warn("apply - Destination is required.");
 					return new ResourceNotFoundException("Destination is required.");
@@ -214,7 +209,9 @@ public class TransactionsServiceImpl implements TransactionsService {
 	}
 
 	private void applyExpense(Transaction transaction) {
-		var origin = this.accountRepository.findById(transaction.getOrigin().getId())
+		var user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+		var origin = this.accountRepository.findByUserIdAndId(user.getId(), transaction.getOrigin().getId())
 				.orElseThrow(() -> {
 					LOGGER.warn("valid - Origen is required.");
 					throw new ResourceNotFoundException("Origen is required.");
@@ -238,7 +235,9 @@ public class TransactionsServiceImpl implements TransactionsService {
 	}
 
 	private void applyDebt(Transaction transaction) {
-		var destination = this.accountRepository.findById(transaction.getDestination().getId())
+		var user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+		var destination = this.accountRepository.findByUserIdAndId(user.getId(), transaction.getDestination().getId())
 				.orElseThrow(() -> {
 					LOGGER.warn("apply - Destination is required.");
 					return new ResourceNotFoundException("Destination is required.");
@@ -253,8 +252,14 @@ public class TransactionsServiceImpl implements TransactionsService {
 	public List<TransactionDTO> createBulk(List<TransactionDTO> transactions) {
 		this.valid(transactions);
 
+		var user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
 		var accountIds = this.getAccountIds(transactions);
-		var accounts = this.accountRepository.usedAccounts(1L, accountIds);
+		var accounts = this.accountRepository.usedAccounts(user.getId(), accountIds);
+
+		if( !accountIds.equals(accounts.stream().map(Account::getId).collect(Collectors.toSet())) ) {
+			throw new ResourceNotFoundException("Account does not exists.");
+		}
 
 		transactions.sort(Comparator.comparing(TransactionDTO::getSavedAt));
 
@@ -319,9 +324,10 @@ public class TransactionsServiceImpl implements TransactionsService {
 	}
 
 	private Transaction mapToTransaction(TransactionDTO transactionDTO) {
-		Transaction transaction = new Transaction();
+		var user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-		transaction.setUser(User.builder().id(1L).build());
+		Transaction transaction = new Transaction();
+		transaction.setUser(user);
 
 		transaction.setOrigin(Account.builder().id(transactionDTO.getOrigin().getId()).build());
 		if( Optional.ofNullable(transactionDTO.getDestination()).isPresent() ) {
