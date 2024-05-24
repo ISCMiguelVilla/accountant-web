@@ -1,0 +1,33 @@
+<p-toast></p-toast>
+
+<div class="flex flex-column justify-content-center align-items-center h-full m-2">
+	<div class="card p-fluid w-full sm:w-20rem p-5">
+		<h2>Iniciar Sesión</h2>
+		<form autocomplete="off" [formGroup]="signInForm" role="form">
+			<div class="field" [class.p-error]="signInForm.get('username').touched && signInForm.get('username').invalid">
+				<label htmlFor="username">Email</label>
+				<input formControlName="username" pInputText id="username" type="text" placeholder="your-username@example.com"
+						[ngClass]="{'ng-invalid ng-dirty': signInForm.get('username').touched && signInForm.get('username').invalid}"/>
+				<ng-container *ngIf="signInForm.get('username').touched && signInForm.get('username').invalid">
+					<small *ngIf="signInForm.get('username').errors['required']">Email is required</small>
+					<small *ngIf="signInForm.get('username').errors['email']">This doesn't look like an email</small>
+				</ng-container>
+			</div>
+			<div class="field" [class.p-error]="signInForm.get('password').touched && signInForm.get('password').invalid">
+				<label htmlFor="password">Password</label>
+				<p-password formControlName="password" inputId="password" [feedback]="false" placeholder="type your password" autocomplete="off"
+						[ngClass]="{'ng-invalid ng-dirty': signInForm.get('password').touched && signInForm.get('password').invalid}"/>
+				<ng-container *ngIf="signInForm.get('password').touched && signInForm.get('password').invalid">
+					<small *ngIf="signInForm.get('password').errors['required']">Password is required</small>
+					<small *ngIf="signInForm.get('password').errors['minlength']">A minimum length of {{ signInForm.get('password').errors['minlength'].requiredLength }} is required</small>
+				</ng-container>
+			</div>
+			<div class="field">
+				<p-button icon="fa-solid fa-check" label="Sign up" (click)="onSave()"></p-button>
+			</div>
+		</form>
+		<div class="field">
+			<a routerLink="../sign-up">¿No tienes una cuenta?</a>
+		</div>
+	</div>
+</div>

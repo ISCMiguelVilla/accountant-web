@@ -75,6 +75,16 @@ export class AppMenuComponent implements OnInit {
 						]
 					},
 				]
+			},
+			{
+				label: 'User',
+				items: [
+					{
+						label: 'Sign out ',
+						icon: 'fa-solid fa-arrow-right-from-bracket',
+						routerLink: '../sign-out'
+					},
+				]
 			}
 		];
 	}
