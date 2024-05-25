@@ -115,4 +115,34 @@ CREATE TABLE IF NOT EXISTS `transactions` (
 
 -- SEED DATA
 INSERT INTO accountant.currencies(created_at, updated_at, id, color, iso, name, status)
-VALUES('2024-05-25', NULL, 2, '#14B8A6', 'MXN', 'Mexican Peso', 'ACTIVE');
+VALUES('2024-05-25', NULL, 1, '#14B8A6', 'MXN', 'Mexican Peso', 'ACTIVE');
+
+INSERT INTO accountant.users
+(id, name, password, username, `role`)
+VALUES(1, 'Admin', '$2a$10$nOZV7q2J1KA98bhoqLAT/eTkKCxqP78A44JkrFOhenA.TWhi5O1pe', 'admin@accountant.com', 'ADMIN');
+
+INSERT INTO accountant.accounts
+(amount, created_at, deleted_at, include_in_balance, is_temporal, updated_at, currency_id, id, parent_account_id, user_id, color, icon, name, status, `type`)
+VALUES(NULL, '2024-05-25', NULL, 0, 0, NULL, 1, 1, NULL, 1, '#3B82F6', 'fa-regular fa-credit-card', 'Your Job', 'ACTIVE', 'SUPPLIER');
+INSERT INTO accountant.accounts
+(amount, created_at, deleted_at, include_in_balance, is_temporal, updated_at, currency_id, id, parent_account_id, user_id, color, icon, name, status, `type`)
+VALUES(0.00, '2024-05-25', NULL, 1, 0, NULL, 1, 2, NULL, 1, '#3B82F6', 'fa-regular fa-credit-card', 'Your Bank', 'ACTIVE', 'STORAGE');
+INSERT INTO accountant.accounts
+(amount, created_at, deleted_at, include_in_balance, is_temporal, updated_at, currency_id, id, parent_account_id, user_id, color, icon, name, status, `type`)
+VALUES(0.00, '2024-05-25', NULL, 1, 0, NULL, 1, 3, 2, 1, '#3B82F6', 'fa-regular fa-credit-card', 'Apart', 'ACTIVE', 'STORAGE');
+INSERT INTO accountant.accounts
+(amount, created_at, deleted_at, include_in_balance, is_temporal, updated_at, currency_id, id, parent_account_id, user_id, color, icon, name, status, `type`)
+VALUES(NULL, '2024-05-25', NULL, 0, 0, NULL, 1, 4, NULL, 1, '#3B82F6', 'fa-regular fa-credit-card', 'Home', 'ACTIVE', 'CONSUMER');
+INSERT INTO accountant.accounts
+(amount, created_at, deleted_at, include_in_balance, is_temporal, updated_at, currency_id, id, parent_account_id, user_id, color, icon, name, status, `type`)
+VALUES(NULL, '2024-05-25', NULL, 0, 0, NULL, 1, 5, 4, 1, '#3B82F6', 'fa-regular fa-credit-card', 'Internet', 'ACTIVE', 'CONSUMER');
+INSERT INTO accountant.accounts
+(amount, created_at, deleted_at, include_in_balance, is_temporal, updated_at, currency_id, id, parent_account_id, user_id, color, icon, name, status, `type`)
+VALUES(NULL, '2024-05-25', NULL, 0, 0, NULL, 1, 6, 4, 1, '#3B82F6', 'fa-regular fa-credit-card', 'Gas', 'ACTIVE', 'CONSUMER');
+INSERT INTO accountant.accounts
+(amount, created_at, deleted_at, include_in_balance, is_temporal, updated_at, currency_id, id, parent_account_id, user_id, color, icon, name, status, `type`)
+VALUES(0.00, '2024-05-25', NULL, 1, 0, NULL, 1, 7, NULL, 1, '#3B82F6', 'fa-regular fa-credit-card', 'Invest', 'ACTIVE', 'INVESTMENT');
+
+INSERT INTO accountant.schedule_transactions
+(amount, interest, created_at, deleted_at, destination_id, id, last_execution, next_execution, origin_id, updated_at, user_id, cron_expression, description, status, `type`)
+VALUES(10.00, 0.00, '2024-05-25 18:17:46.410530', NULL, 2, 1, NULL, '2024-05-28 07:00:00', 1, NULL, 1, '0 0 7 28 * *', 'Income', 'ACTIVE', 'INCOME');

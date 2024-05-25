@@ -1,12 +1,15 @@
 # Accountant CONFIG
 
+SpringBoot
 ```bash
 gradlew build -x test
 ```
 
+Angular
 ```bash
-
+npm run build
 ```
+
 
 ```bash
 docker-compose down && docker-compose build && docker-compose up

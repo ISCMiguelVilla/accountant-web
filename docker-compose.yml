@@ -11,16 +11,13 @@ services:
       MARIADB_PASSWORD: L3dK1ll+
     ports:
       - 3333:3306
-    # volumes:
-    #  - accountant_workspace_volume:/var/lib/mysql
     volumes:
-     - "./database/accountant_schema.sql:/docker-entrypoint-initdb.d/1.sql"
-    #  - accountant_workspace_volume:/var/lib/mysql
+      - "./database/accountant_schema.sql:/docker-entrypoint-initdb.d/1.sql"
     networks:
      - backendNetwork
 
   backend:
-    image: openjdk:17-jdk-alpine
+    build: ./back/
     container_name: backend
     ports:
       - 8080:8080
@@ -28,7 +25,6 @@ services:
       - database
     volumes:
       - ./back/build/libs/accountant-0.0.1-SNAPSHOT.jar:/application.jar
-    command: ["java", "-jar", "-Dspring.profiles.active=prod", "application.jar"]
     networks:
       - backendNetwork
       - frontendNetwork
@@ -41,9 +37,7 @@ services:
     depends_on:
       - backend
     volumes:
-      # - ./nginx.conf:/etc/nginx/nginx.conf
       - ./front/dist/accountant/browser:/usr/share/nginx/html
-    # command: ["nginx", "-g", "\"daemon off;\""]
     networks:
       - frontendNetwork
 
